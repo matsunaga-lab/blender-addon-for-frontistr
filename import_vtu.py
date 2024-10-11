@@ -4,7 +4,11 @@ import bpy_extras
 import os
 import numpy
 import pathlib
-import vtk
+
+if os.name == "posix":
+    import vtk_for_fistr as vtk
+else:
+    import vtk
 from vtk.util.numpy_support import vtk_to_numpy
 from vtk.util.numpy_support import numpy_to_vtk
 
