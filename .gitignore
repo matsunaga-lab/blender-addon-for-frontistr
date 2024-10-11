@@ -1,0 +1,13 @@
+/*
+
+# white list
+!/.gitignore
+!/.gitmodule
+!/.github/
+!/README.md
+!/*.md
+!/*.txt
+!/*.yml
+!/*.toml
+!/*.py
+!/*.sh
