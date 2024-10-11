@@ -90,7 +90,7 @@ def fistr_import_vtu_sequence(self, context):
             self.report({'WARNING'},message)
     
     # Create material for surface
-    material1,matnodes1 = new_material_nodes(obj=obj, material_name=f"{objname}.material")
+    material1,matnodes1 = new_material_nodes(context, obj, f"{objname}.material")
     
     node_p_BSDF = matnodes1.nodes["Principled BSDF"]
     node_output = matnodes1.nodes["Material Output"]
@@ -123,7 +123,7 @@ def fistr_import_vtu_sequence(self, context):
     node_output.location.y = node_p_BSDF.location.y
     
     # Create material for wireframe
-    material2,matnodes2 = new_material_nodes(obj=obj, material_name=f"{objname}.wireframe.material")
+    material2,matnodes2 = new_material_nodes(context, obj, f"{objname}.wireframe.material")
     
     node_p_BSDF = matnodes2.nodes["Principled BSDF"]
     node_output = matnodes2.nodes["Material Output"]
@@ -138,7 +138,7 @@ def fistr_import_vtu_sequence(self, context):
     node_p_BSDF.inputs[9].default_value = cellsize*0.05 # Subsurface/Scale[m]
     
     # Create geometry nodes
-    geonodes = new_geometry_nodes(obj=obj,geonodes_name=f"{objname}.geonodes")
+    geonodes = new_geometry_nodes(context, obj, f"{objname}.geonodes")
     
     node_input = geonodes.nodes["Group Input"]
     

@@ -138,14 +138,25 @@ ATTRIBUTE_NAME_MISES_STRESS = "NodalMISES"
 def clear_existing_objects():
     bpy.ops.wm.read_factory_settings(use_empty=True)
 
-def new_geometry_nodes(obj, geonodes_name):
-    bpy.context.view_layer.objects.active = obj
-    bpy.ops.node.new_geometry_nodes_modifier()
-    *_,geonodes = bpy.data.node_groups.values()
-    geonodes.name = geonodes_name
+def new_geometry_nodes(context, obj, geonodes_name):
+    from bpy.app.translations import pgettext_data as gettext
+    modifier = obj.modifiers.new(name=gettext("Geometry Nodes"), type='NODES')
+    geonodes = bpy.data.node_groups.new(name=geonodes_name, type='GeometryNodeTree')
+    geonodes.interface.new_socket(gettext("Geometry"), in_out='INPUT', socket_type='NodeSocketGeometry')
+    geonodes.interface.new_socket(gettext("Geometry"), in_out='OUTPUT', socket_type='NodeSocketGeometry')
+    input_node = geonodes.nodes.new('NodeGroupInput')
+    input_node.select = False
+    input_node.location.x = -200 - input_node.width
+    output_node = geonodes.nodes.new('NodeGroupOutput')
+    output_node.is_active_output = True
+    output_node.select = False
+    output_node.location.x = 200
+    geonodes.links.new(input_node.outputs[0], output_node.inputs[0])
+    geonodes.is_modifier = True
+    modifier.node_group = geonodes
     return geonodes
 
-def new_material_nodes(obj, material_name):
+def new_material_nodes(context, obj, material_name):
     material = bpy.data.materials.new(name=material_name)
     material.use_nodes = True
     obj.data.materials.append(material)
@@ -200,7 +211,7 @@ def fistr_import_vtu(self, context):
             mises_stress_max = max(mises_stress_max,attr_mises_stress.max())
         
         # Create material for surface
-        material1,matnodes1 = new_material_nodes(obj=obj, material_name=f"{objname}.material")
+        material1,matnodes1 = new_material_nodes(context, obj, f"{objname}.material")
         
         node_p_BSDF = matnodes1.nodes["Principled BSDF"]
         node_output = matnodes1.nodes["Material Output"]
@@ -233,7 +244,7 @@ def fistr_import_vtu(self, context):
         node_output.location.y = node_p_BSDF.location.y
         
         # Create material for wireframe
-        material2,matnodes2 = new_material_nodes(obj=obj, material_name=f"{objname}.wireframe.material")
+        material2,matnodes2 = new_material_nodes(context, obj, f"{objname}.wireframe.material")
         
         node_p_BSDF = matnodes2.nodes["Principled BSDF"]
         node_output = matnodes2.nodes["Material Output"]
@@ -248,7 +259,7 @@ def fistr_import_vtu(self, context):
         node_p_BSDF.inputs[9].default_value = cellsize*0.05 # Subsurface/Scale[m]
         
         # Create geometry nodes
-        geonodes = new_geometry_nodes(obj=obj,geonodes_name=f"{objname}.geonodes")
+        geonodes = new_geometry_nodes(context, obj, f"{objname}.geonodes")
         
         node_input = geonodes.nodes["Group Input"]
         
