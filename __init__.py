@@ -2,7 +2,7 @@
 bl_info = {
     "name": "Add-on for FrontISTR",
     "author": "Takuya Matsunaga",
-    "version": (0, 0, 4),
+    "version": (0, 0, 3),
     "blender": (4, 2, 0),
     "location": "File > Import > FrontISTR",
     "description": "Import and visualize FrontISTR files",
@@ -22,22 +22,6 @@ if True: # True | False
 		except ImportError:
 			subprocess.run([sys.executable, "-m", "pip", "install", module])
 
-# workaround for vtk import error on linux and mac
-if True: # True | False
-    import os
-    if os.name == "posix":
-        import site
-        for dir in site.getsitepackages():
-            filepath0 = os.path.join(dir,"vtk.py")
-            filepath1 = os.path.join(dir,"vtk_for_fistr.py")
-            if not os.path.isfile(filepath0):
-                continue
-            with open(filepath0,"r") as f0, open(filepath1,"w") as f1:
-                for line in f0:
-                    if "from vtkmodules.vtkRenderingMatplotlib import *" in line:
-                        f1.write("# "+line)
-                    else:
-                        f1.write(line)
 
 if "bpy" in locals():
     import importlib
