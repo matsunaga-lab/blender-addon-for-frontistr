@@ -141,7 +141,7 @@ def clear_existing_objects():
 def new_geometry_nodes(obj, geonodes_name):
     bpy.context.view_layer.objects.active = obj
     bpy.ops.node.new_geometry_nodes_modifier()
-    geonodes = bpy.data.node_groups.values()[-1]
+    *_,geonodes = bpy.data.node_groups.values()
     geonodes.name = geonodes_name
     return geonodes
 
