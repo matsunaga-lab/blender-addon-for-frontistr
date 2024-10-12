@@ -2,7 +2,7 @@
 bl_info = {
     "name": "Add-on for FrontISTR",
     "author": "Takuya Matsunaga",
-    "version": (0, 0, 6),
+    "version": (0, 0, 7),
     "blender": (4, 2, 0),
     "location": "File > Import > FrontISTR",
     "description": "Import and visualize FrontISTR files",
@@ -21,7 +21,7 @@ if True: # True | False
     if not os.path.exists(sitepackages_dir):
         os.makedirs(sitepackages_dir)
     if not sitepackages_dir in sys.path:
-        sys.path.append(sitepackages_dir)
+        sys.path = [sitepackages_dir] + sys.path
     for package in required_packages:
         try:
             importlib.import_module(package)
