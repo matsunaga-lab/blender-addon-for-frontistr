@@ -6,7 +6,6 @@ import numpy
 import pathlib
 import vtk
 from vtk.util.numpy_support import vtk_to_numpy
-from vtk.util.numpy_support import numpy_to_vtk
 
 from .import_vtu import (
     VtuData,
