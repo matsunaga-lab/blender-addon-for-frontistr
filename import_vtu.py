@@ -138,11 +138,10 @@ def clear_existing_objects():
     bpy.ops.wm.read_factory_settings(use_empty=True)
 
 def new_geometry_nodes(context, obj, geonodes_name):
-    from bpy.app.translations import pgettext_data as gettext
-    modifier = obj.modifiers.new(name=gettext("Geometry Nodes"), type='NODES')
+    modifier = obj.modifiers.new(name=bpy.app.translations.pgettext_data("Geometry Nodes"), type='NODES')
     geonodes = bpy.data.node_groups.new(name=geonodes_name, type='GeometryNodeTree')
-    geonodes.interface.new_socket(gettext("Geometry"), in_out='INPUT', socket_type='NodeSocketGeometry')
-    geonodes.interface.new_socket(gettext("Geometry"), in_out='OUTPUT', socket_type='NodeSocketGeometry')
+    geonodes.interface.new_socket(bpy.app.translations.pgettext_data("Geometry"), in_out='INPUT', socket_type='NodeSocketGeometry')
+    geonodes.interface.new_socket(bpy.app.translations.pgettext_data("Geometry"), in_out='OUTPUT', socket_type='NodeSocketGeometry')
     input_node = geonodes.nodes.new('NodeGroupInput')
     input_node.select = False
     input_node.location.x = -200 - input_node.width
@@ -212,8 +211,8 @@ def fistr_import_vtu(self, context):
         # Create material for surface
         material1,matnodes1 = new_material_nodes(context, obj, f"{objname}.material")
         
-        node_p_BSDF = matnodes1.nodes["Principled BSDF"]
-        node_output = matnodes1.nodes["Material Output"]
+        node_p_BSDF = matnodes1.nodes[bpy.app.translations.pgettext_data("Principled BSDF")]
+        node_output = matnodes1.nodes[bpy.app.translations.pgettext_data("Material Output")]
         
         node_inputattr = matnodes1.nodes.new(type="ShaderNodeAttribute")
         node_inputattr.attribute_name = "color_factor"
@@ -245,8 +244,8 @@ def fistr_import_vtu(self, context):
         # Create material for wireframe
         material2,matnodes2 = new_material_nodes(context, obj, f"{objname}.wireframe.material")
         
-        node_p_BSDF = matnodes2.nodes["Principled BSDF"]
-        node_output = matnodes2.nodes["Material Output"]
+        node_p_BSDF = matnodes2.nodes[bpy.app.translations.pgettext_data("Principled BSDF")]
+        node_output = matnodes2.nodes[bpy.app.translations.pgettext_data("Material Output")]
         
         node_p_BSDF.inputs[0].default_value = (1.0,1.0,1.0,1.0) # Base Color
         node_p_BSDF.inputs[1].default_value = 0.0 # Metallic
@@ -260,7 +259,8 @@ def fistr_import_vtu(self, context):
         # Create geometry nodes
         geonodes = new_geometry_nodes(context, obj, f"{objname}.geonodes")
         
-        node_input = geonodes.nodes["Group Input"]
+        node_input = geonodes.nodes[bpy.app.translations.pgettext_data("Group Input")]
+        node_output = geonodes.nodes[bpy.app.translations.pgettext_data("Group Output")]
         
         node_scenetime = geonodes.nodes.new(type="GeometryNodeInputSceneTime")
         node_scenetime.location.x = node_input.location.x-900
@@ -325,8 +325,8 @@ def fistr_import_vtu(self, context):
         node_setposition = geonodes.nodes.new(type="GeometryNodeSetPosition")
         node_setposition.location.x = node_input.location.x+node_input.width+40
         node_setposition.location.y = node_input.location.y
-        geonodes.links.new(node_input.outputs["Geometry"], node_setposition.inputs["Geometry"])
-        geonodes.links.new(node_scale.outputs[0], node_setposition.inputs["Offset"])
+        geonodes.links.new(node_input.outputs[0], node_setposition.inputs[0])
+        geonodes.links.new(node_scale.outputs[0], node_setposition.inputs[3])
         
         node_maprange2 = geonodes.nodes.new(type="ShaderNodeMapRange")
         node_maprange2.inputs[1].default_value = mises_stress_min # From Min
@@ -335,7 +335,7 @@ def fistr_import_vtu(self, context):
         node_maprange2.inputs[4].default_value = 1.0 # To Max
         node_maprange2.location.x = node_inputattr2.location.x+node_inputattr2.width+40
         node_maprange2.location.y = node_inputattr2.location.y
-        geonodes.links.new(node_inputattr2.outputs["Attribute"], node_maprange2.inputs["Value"])
+        geonodes.links.new(node_inputattr2.outputs[0], node_maprange2.inputs[0])
         
         node_storeattr2 = geonodes.nodes.new(type="GeometryNodeStoreNamedAttribute")
         node_storeattr2.data_type = "FLOAT"
@@ -344,8 +344,8 @@ def fistr_import_vtu(self, context):
         node_storeattr2.location.x = node_setposition.location.x+node_setposition.width+40
         node_storeattr2.location.y = node_setposition.location.y
         node_storeattr2.width = 260
-        geonodes.links.new(node_maprange2.outputs["Result"], node_storeattr2.inputs["Value"])
-        geonodes.links.new(node_setposition.outputs["Geometry"], node_storeattr2.inputs["Geometry"])
+        geonodes.links.new(node_setposition.outputs[0], node_storeattr2.inputs[0])
+        geonodes.links.new(node_maprange2.outputs[0], node_storeattr2.inputs[3])
         
         node_meshtocurve = geonodes.nodes.new(type="GeometryNodeMeshToCurve")
         node_meshtocurve.location.x = node_storeattr2.location.x+node_storeattr2.width+40
@@ -383,10 +383,9 @@ def fistr_import_vtu(self, context):
         geonodes.links.new(node_setmaterial2.outputs[0], node_joingeometry.inputs[0])
         geonodes.links.new(node_setmaterial1.outputs[0], node_joingeometry.inputs[0])
         
-        node_output = geonodes.nodes["Group Output"]
         node_output.location.x = node_joingeometry.location.x+node_joingeometry.width+40
         node_output.location.y = node_joingeometry.location.y
-        geonodes.links.new(node_joingeometry.outputs[0], node_output.inputs["Geometry"])
+        geonodes.links.new(node_joingeometry.outputs[0], node_output.inputs[0])
         
         # finish
         t1 = timer.perf_counter()

@@ -2,7 +2,7 @@
 bl_info = {
     "name": "Add-on for FrontISTR",
     "author": "Takuya Matsunaga",
-    "version": (0, 0, 7),
+    "version": (0, 0, 8),
     "blender": (4, 2, 0),
     "location": "File > Import > FrontISTR",
     "description": "Import and visualize FrontISTR files",
